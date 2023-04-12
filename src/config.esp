@@ -153,6 +153,11 @@ bool ICACHE_FLASH_ATTR loadConfiguration(Config &config)
 		rfidss = hardware["sspin"];
 		setupPN532Reader(rfidss);
 	}
+	else if (config.readertype > READER_PN532)
+	{
+		setupRDM6300Reader();
+	}
+
 	if (network.containsKey("fallbackmode"))
 	{
 		config.fallbackMode = network["fallbackmode"] == 1;
