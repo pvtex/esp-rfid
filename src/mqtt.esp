@@ -329,6 +329,7 @@ void mqttPublishAccess(time_t accesstime, String const &isknown, int types[MAX_N
 	else
 	{
 		mqttPublishEvent(&root, "tag");
+		mqttPublishEvent(&root, "pincode");
 	}
 }
 
