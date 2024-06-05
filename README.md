@@ -201,6 +201,7 @@ At least 1000 unique User (RFID Tag) can be handled, the test were performed on 
 - @arduino12
 - @Pako2
 - @marelab
+- @pvtex
 
 See [ChangeLog](https://github.com/esprfid/esp-rfid/blob/dev/CHANGELOG.md)
 
