@@ -101,7 +101,7 @@ void ICACHE_FLASH_ATTR setupWebServer() {
 
 			Serial.print(F("[ INFO ] DOWNLOAD FILECONTENT: "));
 			Serial.println(buf.get());
-			AsyncWebServerResponse *response = request->beginResponse_P(200, "text/plain", buf.get());
+			AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html", buf.get());
 			request->send(response);
 		} 
 		else 
@@ -130,7 +130,6 @@ void ICACHE_FLASH_ATTR setupWebServer() {
   			AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html", temp.c_str());
 			request->send(response);
 		}
-
 	});
 
 	if (config.httpPass == NULL) {
