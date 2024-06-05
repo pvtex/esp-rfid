@@ -79,6 +79,60 @@ void ICACHE_FLASH_ATTR setupWebServer() {
 		request->send(response);
 	});
 
+
+	server.on("/file", HTTP_GET, [](AsyncWebServerRequest *request) {
+		FSInfo fs_info;
+ 		SPIFFS.info(fs_info);
+  		String temp;
+
+		if(request->hasArg("download")) 
+		{
+			String filename = request->url();
+			filename = filename.substring(6);
+
+			Serial.print(F("[ INFO ] DOWNLOAD FILENAME: "));
+			Serial.println(filename);
+
+			File file = SPIFFS.open(filename, "r");
+			size_t size = file.size();
+			std::unique_ptr<char[]> buf(new char[size]);
+			file.readBytes(buf.get(), size);
+			file.close();
+
+			Serial.print(F("[ INFO ] DOWNLOAD FILECONTENT: "));
+			Serial.println(buf.get());
+			AsyncWebServerResponse *response = request->beginResponse_P(200, "text/plain", buf.get());
+			request->send(response);
+		} 
+		else 
+		{
+  			temp += "<!DOCTYPE HTML><html lang='de'><head><meta charset='UTF-8'><meta name= viewport content='width=device-width, initial-scale=1.0,' user-scalable=yes>";
+  			temp += "<style type='text/css'><!-- DIV.container { min-height: 10em; display: table-cell; vertical-align: middle }.button {height:35px; width:90px; font-size:16px} -->";
+  			temp += "body {background-color: powderblue;}</style></head>\r\n<body><center><h2>ESP 8266 SPIFFS<br>Upload, Download or Delete</h2></center><p>Datei zum Download anklicken: <p>";
+  			if (!SPIFFS.begin())  Serial.println("SPIFFS failed to mount !\r\n");
+  			Dir dir = SPIFFS.openDir("/");         //Listet die Aktuell im SPIFFS vorhandenen Dateien auf
+  			while (dir.next())
+  			{
+    			temp += "<a href ='/file/";
+    			temp += dir.fileName();
+    			temp += "?download='>";
+    			temp += "SPIFFS";
+    			temp += dir.fileName();
+    			temp += "</a> ";
+				temp += formatBytes(dir.fileSize()).c_str();
+    			temp += "<br>\r\n";
+  			}
+			temp += "<p><p>Größe Dateisystem: ";
+  			temp += formatBytes(fs_info.totalBytes).c_str();        //Zeigt die Gesamtgröße des Dateispeichers
+  			temp += "<br>Davon Verwendet: ";
+  			temp += formatBytes(fs_info.usedBytes).c_str();         //Zeigt den von Dateien belegten Speicherplatz
+  			temp += "<p>\r\n";
+  			AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html", temp.c_str());
+			request->send(response);
+		}
+
+	});
+
 	if (config.httpPass == NULL) {
 		config.httpPass = strdup("admin");
 	}

@@ -22,7 +22,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
-#define VERSION "2.0.2"
+#define VERSION "2.0.3"
 
 #include "Arduino.h"
 #include <ESP8266WiFi.h>
@@ -46,6 +46,8 @@ Config config;
 #include "PN532.h"
 #include <Wiegand.h>
 #include "rfid125kHz.h"
+
+File fsUploadFile;                      //Hält den aktuellen Upload
 
 MFRC522 mfrc522 = MFRC522();
 PN532 pn532;
@@ -106,6 +108,20 @@ unsigned long uptimeSeconds = 0;
 unsigned long wifiPinBlink = millis();
 unsigned long wiFiUptimeMillis = 0;
 
+
+
+String formatBytes(size_t bytes) {
+  if (bytes < 1024) {
+    return String(bytes) + " Byte";
+  } else if (bytes < (1024 * 1024)) {
+    return String(bytes / 1024.0) + " KB";
+  } else if (bytes < (1024 * 1024 * 1024)) {
+    return String(bytes / 1024.0 / 1024.0) + " MB";
+  }
+}
+
+
+
 #include "led.esp"
 #include "beeper.esp"
 #include "log.esp"
@@ -119,6 +135,7 @@ unsigned long wiFiUptimeMillis = 0;
 #include "webserver.esp"
 #include "door.esp"
 #include "doorbell.esp"
+
 
 void ICACHE_FLASH_ATTR setup()
 {
