@@ -203,7 +203,7 @@ At least 1000 unique User (RFID Tag) can be handled, the test were performed on 
 - @marelab
 - @pvtex
 
-See [ChangeLog](https://github.com/esprfid/esp-rfid/blob/dev/CHANGELOG.md)
+See [ChangeLog](./CHANGELOG.md)
 
 ## Donations
 [![OC](https://opencollective.com/esp-rfid/tiers/esp-rfid-user.svg?avatarHeight=56)](https://opencollective.com/esp-rfid)
