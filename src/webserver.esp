@@ -79,31 +79,62 @@ void ICACHE_FLASH_ATTR setupWebServer() {
 		request->send(response);
 	});
 
+/*
+	server.on("/upload", HTTP_GET, [](AsyncWebServerRequest *request) {
+		HTTPUpload& upload = server.upload();
+  		if (upload.status == UPLOAD_FILE_START) {
+    		String filename = upload.filename;
+    		Serial.print("[ INFO ] handleFileUpload Name: "); Serial.println(filename);
+    		if (filename.length() > 30) {
+      			int x = filename.length() - 30;
+      			filename = filename.substring(x, 30 + x);
+    		}
+    		if (!filename.startsWith("/")) filename = "/" + filename;
+    		Serial.print("[ INFO ] handleFileUpload Name: "); Serial.println(filename);
+    		fsUploadFile = SPIFFS.open(filename, "w");
+    		filename = String();
+  		} else if (upload.status == UPLOAD_FILE_WRITE) {
+    		Serial.print("[ INFO ] handleFileUpload Data: "); Serial.println(upload.currentSize);
+    		if (fsUploadFile)
+      			fsUploadFile.write(upload.buf, upload.currentSize);
+  		} else if (upload.status == UPLOAD_FILE_END) {
+    		if (fsUploadFile)
+      			fsUploadFile.close();
+    		yield();
+    		Serial.print("[ INFO ] handleFileUpload Size: "); Serial.println(upload.totalSize);
+    		handleRoot();
+  		}
+	}
+*/
 
 	server.on("/file", HTTP_GET, [](AsyncWebServerRequest *request) {
 		FSInfo fs_info;
  		SPIFFS.info(fs_info);
   		String temp;
 
+		String filename = request->url();
+		filename = filename.substring(5);
+
 		if(request->hasArg("download")) 
 		{
-			String filename = request->url();
-			filename = filename.substring(6);
-
 			Serial.print(F("[ INFO ] DOWNLOAD FILENAME: "));
 			Serial.println(filename);
 
-			File file = SPIFFS.open(filename, "r");
-			size_t size = file.size();
-			std::unique_ptr<char[]> buf(new char[size]);
-			file.readBytes(buf.get(), size);
-			file.close();
-
-			Serial.print(F("[ INFO ] DOWNLOAD FILECONTENT: "));
-			Serial.println(buf.get());
-			AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html", buf.get());
+			AsyncWebServerResponse *response = request->beginResponse(SPIFFS, filename, String(), true);
+			response->addHeader("Content-Type", "application/json");
 			request->send(response);
 		} 
+		if (request->hasArg("Delete")) {
+			
+			Serial.print(F("[ INFO ] DELETE FILENAME: "));
+			Serial.println(filename);
+
+      		SPIFFS.remove(filename);
+			                         
+    		temp = "<!DOCTYPE HTML><html lang='de'><head><meta charset='UTF-8'><meta name= viewport content=width=device-width, initial-scale=1.0, user-scalable=yes><meta http-equiv='refresh' content='3; URL=/file>";
+    		AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html", temp.c_str());
+			request->send(response);
+		}
 		else 
 		{
   			temp += "<!DOCTYPE HTML><html lang='de'><head><meta charset='UTF-8'><meta name= viewport content='width=device-width, initial-scale=1.0,' user-scalable=yes>";
@@ -113,7 +144,7 @@ void ICACHE_FLASH_ATTR setupWebServer() {
   			Dir dir = SPIFFS.openDir("/");         //Listet die Aktuell im SPIFFS vorhandenen Dateien auf
   			while (dir.next())
   			{
-    			temp += "<a href ='/file/";
+    			temp += "<a href ='/file";
     			temp += dir.fileName();
     			temp += "?download='>";
     			temp += "SPIFFS";
@@ -122,11 +153,17 @@ void ICACHE_FLASH_ATTR setupWebServer() {
 				temp += formatBytes(dir.fileSize()).c_str();
     			temp += "<br>\r\n";
   			}
-			temp += "<p><p>Größe Dateisystem: ";
+			temp += "<form action='/file' method='POST'>Zum löschen per Drag-and-Drop einfügen<br>";
+ 			temp += "<input type='text' name='Delete' placeholder='Datei hier einfügen' required>\r\n<br>";
+  			temp += "<input type='submit' class='button' name='SUBMIT' value='Löschen'></form><p>";
+  			temp += "<form method='POST' action='/upload' enctype='multipart/form-data' style='height:35px;'><input type='file' name='upload' style='height:35px; font-size:13px;' required>\r\n<input type='submit' value='Upload' class='button'></form>";
+  			temp += "Datei hochladen<p><p>Größe Dateisystem: ";
   			temp += formatBytes(fs_info.totalBytes).c_str();        //Zeigt die Gesamtgröße des Dateispeichers
   			temp += "<br>Davon Verwendet: ";
   			temp += formatBytes(fs_info.usedBytes).c_str();         //Zeigt den von Dateien belegten Speicherplatz
   			temp += "<p>\r\n";
+  			temp += "</body></html>\r\n";
+
   			AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html", temp.c_str());
 			request->send(response);
 		}
