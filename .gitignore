@@ -3,6 +3,7 @@
 
 # platformio
 
+.pio
 .pioenvs
 .piolibdeps
 .clang_complete
