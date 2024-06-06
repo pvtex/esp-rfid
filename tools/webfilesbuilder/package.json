@@ -1,21 +1,22 @@
 {
-  "name": "webfilesbuilder",
-  "version": "1.0.0",
+  "name": "uglifier",
+  "version": "0.0.1",
   "description": "Combine all js and css files into one and gzip them for the ESP-RFID project",
+  "main": "unglify.js",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "start": "gulp"
   },
   "author": "ESP-RFID Developers",
   "license": "UNLICENSED",
   "dependencies": {
-    "gulp": "^5.0.0",
-    "gulp-cli": "^3.0.0",
+    "gulp": "^3.9.1",
     "gulp-concat": "^2.6.1",
     "gulp-flatmap": "^1.0.2",
     "gulp-gzip": "^1.4.2",
     "gulp-htmlmin": "^4.0.0",
-    "gulp-uglify": "^3.0.2",
+    "gulp-uglify": "^3.0.1",
     "pump": "^3.0.0"
   },
-  "bin": "bin.js"
+  "bin": "node_modules\\gulp\\bin\\gulp.js"
 }
