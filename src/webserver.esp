@@ -115,7 +115,7 @@ void ICACHE_FLASH_ATTR setupWebServer() {
   			temp += "<!DOCTYPE HTML><html lang='de'><head><meta charset='UTF-8'><meta name= viewport content='width=device-width, initial-scale=1.0,' user-scalable=yes>";
   			temp += "<link href='css/required.css' rel='stylesheet'>";
   			temp += "</head><body class style>";
-			temp += "<div>";
+			temp += "<br><br><div>";
 			temp += "<legend>SPIFFS File Browser</legend>";
   			if (!SPIFFS.begin())  Serial.println("SPIFFS failed to mount !\r\n");
   			Dir dir = SPIFFS.openDir("/");
