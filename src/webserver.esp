@@ -107,15 +107,15 @@ void ICACHE_FLASH_ATTR setupWebServer() {
 
       		SPIFFS.remove(filename);
 			                         
-    		request->redirect("/file");
+    		request->redirect("/#filebrowser");
 		}
 		else 
 		{
 			AsyncResponseStream *response = request->beginResponseStream("text/html");
   			temp += "<!DOCTYPE HTML><html lang='de'><head><meta charset='UTF-8'><meta name= viewport content='width=device-width, initial-scale=1.0,' user-scalable=yes>";
   			temp += "<link href='css/required.css' rel='stylesheet'>";
-  			temp += "</head>\r\n<body class style>";
-			temp += "<div class='warpper'><div id='content'><div id='ajaxcontent'><div>";
+  			temp += "</head><body class style>";
+			temp += "<div>";
 			temp += "<legend>SPIFFS File Browser</legend>";
   			if (!SPIFFS.begin())  Serial.println("SPIFFS failed to mount !\r\n");
   			Dir dir = SPIFFS.openDir("/");
@@ -159,7 +159,7 @@ void ICACHE_FLASH_ATTR setupWebServer() {
   			temp += "</td></tr><tr><td>used: </td><td style='text-align:right;'>";
   			temp += formatBytes(fs_info.usedBytes).c_str();
   			temp += "</td></tr></table>";
-			temp += "</div></div></div></div></div></div>";
+			temp += "</div></div></div>";
   			temp += "</body></html>";
 
 			response->print(temp);

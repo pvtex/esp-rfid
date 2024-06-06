@@ -805,6 +805,8 @@ function getContent(contentname) {
           data = [];
           getEvents();
           break;
+        case "#filebrowsercontent":
+          break;
         default:
           break;
       }
@@ -1840,6 +1842,10 @@ $("#logmaintenance").click(function() {
 });
 $(".noimp").on("click", function() {
   $("#noimp").modal("show");
+});
+$("#filebrowser").click(function() {
+  getContent("#filebrowsercontent");
+  return false;
 });
 
 window.FooTable.MyFiltering = window.FooTable.Filtering.extend({

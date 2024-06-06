@@ -146,7 +146,7 @@ void handleUpload(AsyncWebServerRequest *request, String filename, size_t index,
     // close the file handle as the upload is now done
     request->_tempFile.close();
     Serial.println(logmessage);
-    request->redirect("/file");
+    request->redirect("/#filebrowser");
   }
 }
 
