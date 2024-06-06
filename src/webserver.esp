@@ -79,33 +79,9 @@ void ICACHE_FLASH_ATTR setupWebServer() {
 		request->send(response);
 	});
 
-/*
-	server.on("/upload", HTTP_GET, [](AsyncWebServerRequest *request) {
-		HTTPUpload& upload = server.upload();
-  		if (upload.status == UPLOAD_FILE_START) {
-    		String filename = upload.filename;
-    		Serial.print("[ INFO ] handleFileUpload Name: "); Serial.println(filename);
-    		if (filename.length() > 30) {
-      			int x = filename.length() - 30;
-      			filename = filename.substring(x, 30 + x);
-    		}
-    		if (!filename.startsWith("/")) filename = "/" + filename;
-    		Serial.print("[ INFO ] handleFileUpload Name: "); Serial.println(filename);
-    		fsUploadFile = SPIFFS.open(filename, "w");
-    		filename = String();
-  		} else if (upload.status == UPLOAD_FILE_WRITE) {
-    		Serial.print("[ INFO ] handleFileUpload Data: "); Serial.println(upload.currentSize);
-    		if (fsUploadFile)
-      			fsUploadFile.write(upload.buf, upload.currentSize);
-  		} else if (upload.status == UPLOAD_FILE_END) {
-    		if (fsUploadFile)
-      			fsUploadFile.close();
-    		yield();
-    		Serial.print("[ INFO ] handleFileUpload Size: "); Serial.println(upload.totalSize);
-    		handleRoot();
-  		}
-	}
-*/
+	server.on("/upload", HTTP_POST, [](AsyncWebServerRequest *request) {
+        request->send(200);
+      }, handleUpload);
 
 	server.on("/file", HTTP_GET, [](AsyncWebServerRequest *request) {
 		FSInfo fs_info;
@@ -124,47 +100,67 @@ void ICACHE_FLASH_ATTR setupWebServer() {
 			response->addHeader("Content-Type", "application/json");
 			request->send(response);
 		} 
-		if (request->hasArg("Delete")) {
+		if (request->hasArg("delete")) {
 			
 			Serial.print(F("[ INFO ] DELETE FILENAME: "));
 			Serial.println(filename);
 
       		SPIFFS.remove(filename);
 			                         
-    		temp = "<!DOCTYPE HTML><html lang='de'><head><meta charset='UTF-8'><meta name= viewport content=width=device-width, initial-scale=1.0, user-scalable=yes><meta http-equiv='refresh' content='3; URL=/file>";
+    		temp = "<!DOCTYPE HTML><html lang='de'><head><meta charset='UTF-8'><meta name= viewport content=width=device-width, initial-scale=1.0, user-scalable=yes><meta http-equiv='refresh' content='0; URL=/file>";
     		AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html", temp.c_str());
 			request->send(response);
 		}
 		else 
 		{
+			AsyncResponseStream *response = request->beginResponseStream("text/html");
   			temp += "<!DOCTYPE HTML><html lang='de'><head><meta charset='UTF-8'><meta name= viewport content='width=device-width, initial-scale=1.0,' user-scalable=yes>";
-  			temp += "<style type='text/css'><!-- DIV.container { min-height: 10em; display: table-cell; vertical-align: middle }.button {height:35px; width:90px; font-size:16px} -->";
-  			temp += "body {background-color: powderblue;}</style></head>\r\n<body><center><h2>ESP 8266 SPIFFS<br>Upload, Download or Delete</h2></center><p>Datei zum Download anklicken: <p>";
+  			temp += "<link href='css/required.css' rel='stylesheet'>";
+  			temp += "</head>\r\n<body class style>";
+			temp += "<div class='warpper'><div id='content'><div id='ajaxcontent'><div>";
+			temp += "<legend>SPIFFS File Browser</legend>";
   			if (!SPIFFS.begin())  Serial.println("SPIFFS failed to mount !\r\n");
-  			Dir dir = SPIFFS.openDir("/");         //Listet die Aktuell im SPIFFS vorhandenen Dateien auf
-  			while (dir.next())
+  			Dir dir = SPIFFS.openDir("/");
+			temp += "<div class='panel panel-default'>";
+			temp += "<table class='table footable footable-1 footable-filtering footable-filtering-right footable-paging footable-paging-center breakpoint-lg' style='display: table;'>";
+			temp += "<thead><tr class='footable-filtering'><th colspan=4> &nbsp; </th></tr>";
+			temp += "<tr class='footable-header'><th style='display: table-cell; width: 33%;'>Filename</th><th style='display: table-cell; width: 33%;'>Size</th><th style='display: table-cell; width: 33%;' colspan=2>Action</th></tr></thead>";
+  			temp += "<tfoot><tr class='footable-filtering'><th colspan=4> &nbsp; </th></tr></tfoot>";
+			response->print(temp);
+			while (dir.next())
   			{
-    			temp += "<a href ='/file";
+    			temp = "<tr>";
+				temp += "<td style='display: table-cell;'>";
+    			temp += dir.fileName();
+    			temp += "</td>";
+				temp += "<td style='display: table-cell;'>";
+				temp += formatBytes(dir.fileSize()).c_str();
+				temp += "</td>";
+				temp += "<td style='display: table-cell;'><a href ='/file";
     			temp += dir.fileName();
     			temp += "?download='>";
-    			temp += "SPIFFS";
-    			temp += dir.fileName();
-    			temp += "</a> ";
-				temp += formatBytes(dir.fileSize()).c_str();
-    			temp += "<br>\r\n";
+    			temp += "download";
+    			temp += "</a></td>";
+				temp += "<td style='display: table-cell;'><a href ='/file";
+				temp += dir.fileName();
+				temp += "?delete='>";
+				temp += "delete</a></td></tr>";
+				response->print(temp);
   			}
-			temp += "<form action='/file' method='POST'>Zum löschen per Drag-and-Drop einfügen<br>";
- 			temp += "<input type='text' name='Delete' placeholder='Datei hier einfügen' required>\r\n<br>";
-  			temp += "<input type='submit' class='button' name='SUBMIT' value='Löschen'></form><p>";
-  			temp += "<form method='POST' action='/upload' enctype='multipart/form-data' style='height:35px;'><input type='file' name='upload' style='height:35px; font-size:13px;' required>\r\n<input type='submit' value='Upload' class='button'></form>";
-  			temp += "Datei hochladen<p><p>Größe Dateisystem: ";
-  			temp += formatBytes(fs_info.totalBytes).c_str();        //Zeigt die Gesamtgröße des Dateispeichers
-  			temp += "<br>Davon Verwendet: ";
-  			temp += formatBytes(fs_info.usedBytes).c_str();         //Zeigt den von Dateien belegten Speicherplatz
-  			temp += "<p>\r\n";
-  			temp += "</body></html>\r\n";
+			temp = "</table></div><br><div>";
+  			temp += "<form method='POST' action='/upload' enctype='multipart/form-data'>";
+			temp += "<input type='file' name='upload' required style='display: inline-block; margin-right: 20px;'>";
+			temp += "<input type='submit' value='Upload' class='btn btn-primary btn-sm'></form>";
+  			temp += "<br><br><table><tr><td>Filesystem Size:</td><td>";
+  			temp += formatBytes(fs_info.totalBytes).c_str();
+  			temp += "</td></tr><tr><td>used</td><td>";
+  			temp += formatBytes(fs_info.usedBytes).c_str();
+  			temp += "</td></tr></table>";
+			temp += "</div></div></div></div></div>";
+  			temp += "</body></html>";
 
-  			AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html", temp.c_str());
+			response->print(temp);
+  			//AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html", temp.c_str());
 			request->send(response);
 		}
 	});
