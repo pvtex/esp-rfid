@@ -154,9 +154,9 @@ void ICACHE_FLASH_ATTR setupWebServer() {
 			temp += "<input type='submit' name='upload' value='Upload' class='btn btn-primary btn-sm' style='display: inline-block; margin-right: 20px;'></form>";
   			temp += "<br>";
 			temp += "<div class='panel panel-default' style='padding:10px;'>";
-			temp += "<table><tr><td>Filesystem Size:</td><td>";
+			temp += "<table><tr><td>Filesystem Size: </td><td style='text-align:right;'>";
   			temp += formatBytes(fs_info.totalBytes).c_str();
-  			temp += "</td></tr><tr><td>used</td><td>";
+  			temp += "</td></tr><tr><td>used: </td><td style='text-align:right;'>";
   			temp += formatBytes(fs_info.usedBytes).c_str();
   			temp += "</td></tr></table>";
 			temp += "</div></div></div></div></div></div>";
