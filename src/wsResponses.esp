@@ -93,6 +93,7 @@ void ICACHE_FLASH_ATTR sendStatus(AsyncWebSocketClient *client)
 	root["spiffssize"] = fsinfo.totalBytes;
 	root["uptime"] = uptimeSeconds;
 	root["version"] = VERSION;
+	root["hostname"] = WiFi.hostname();
 
 	if (config.accessPointMode)
 	{

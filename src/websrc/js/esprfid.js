@@ -757,6 +757,7 @@ function listStats() {
   document.getElementById("mac").innerHTML = ajaxobj.mac;
   document.getElementById("sver").innerText = version;
   $("#mainver").text(version);
+  document.getElementById("systemname").innerHTML = ajaxobj.hostname;
 }
 
 function getContent(contentname) {
