@@ -107,9 +107,7 @@ void ICACHE_FLASH_ATTR setupWebServer() {
 
       		SPIFFS.remove(filename);
 			                         
-    		temp = "<!DOCTYPE HTML><html lang='de'><head><meta charset='UTF-8'><meta name= viewport content=width=device-width, initial-scale=1.0, user-scalable=yes><meta http-equiv='refresh' content='0; URL=/file>";
-    		AsyncWebServerResponse *response = request->beginResponse_P(200, "text/html", temp.c_str());
-			request->send(response);
+    		request->redirect("/file");
 		}
 		else 
 		{
@@ -149,14 +147,20 @@ void ICACHE_FLASH_ATTR setupWebServer() {
   			}
 			temp = "</table></div><br><div>";
   			temp += "<form method='POST' action='/upload' enctype='multipart/form-data'>";
+			temp += "<select id='dir' name='dir' required style='display: inline-block; margin-right: 20px;'>";
+			temp += "<option value='/'>/</option>";
+			temp += "<option value='/P/'>/P/</option>";
+			temp += "</select>";
 			temp += "<input type='file' name='upload' required style='display: inline-block; margin-right: 20px;'>";
-			temp += "<input type='submit' value='Upload' class='btn btn-primary btn-sm'></form>";
-  			temp += "<br><br><table><tr><td>Filesystem Size:</td><td>";
+			temp += "<input type='submit' name='upload' value='Upload' class='btn btn-primary btn-sm' style='display: inline-block; margin-right: 20px;'></form>";
+  			temp += "<br>";
+			temp += "<div class='panel panel-default'>";
+			temp += "<table><tr><td>Filesystem Size:</td><td>";
   			temp += formatBytes(fs_info.totalBytes).c_str();
   			temp += "</td></tr><tr><td>used</td><td>";
   			temp += formatBytes(fs_info.usedBytes).c_str();
   			temp += "</td></tr></table>";
-			temp += "</div></div></div></div></div>";
+			temp += "</div></div></div></div></div></div>";
   			temp += "</body></html>";
 
 			response->print(temp);

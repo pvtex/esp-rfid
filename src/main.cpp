@@ -125,10 +125,13 @@ void handleUpload(AsyncWebServerRequest *request, String filename, size_t index,
   Serial.println(logmessage);
 
   if (!index) {
-    logmessage = "[ INFO ] Upload Start: " + String(filename);
+    logmessage = "[ INFO ] Upload Start: " + request->getParam("dir", true)->value() + String(filename);
     // open the file on first call and store the file handle in the request object
-    request->_tempFile = SPIFFS.open("/" + filename, "w");
-    Serial.println(logmessage);
+    if(request->hasArg("dir")) 
+	{
+		request->_tempFile = SPIFFS.open(request->getParam("dir", true)->value() + filename, "w");
+	}
+	Serial.println(logmessage);
   }
 
   if (len) {
@@ -143,7 +146,7 @@ void handleUpload(AsyncWebServerRequest *request, String filename, size_t index,
     // close the file handle as the upload is now done
     request->_tempFile.close();
     Serial.println(logmessage);
-    request->redirect("/");
+    request->redirect("/file");
   }
 }
 
