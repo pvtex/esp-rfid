@@ -22,7 +22,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
-#define VERSION "2.0.5"
+#define VERSION "2.0.6"
 
 #include "Arduino.h"
 #include <ESP8266WiFi.h>
@@ -109,16 +109,6 @@ unsigned long wifiPinBlink = millis();
 unsigned long wiFiUptimeMillis = 0;
 
 
-
-String formatBytes(size_t bytes) {
-  if (bytes < 1024) {
-    return String(bytes) + " Byte";
-  } else if (bytes < (1024 * 1024)) {
-    return String(bytes / 1024.0) + " KB";
-  } else if (bytes < (1024 * 1024 * 1024)) {
-    return String(bytes / 1024.0 / 1024.0) + " MB";
-  }
-}
 
 void handleUpload(AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final) {
   String logmessage = "[ INFO ] Client:" + request->client()->remoteIP().toString() + " " + request->url();

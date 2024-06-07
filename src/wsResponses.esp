@@ -72,6 +72,49 @@ void ICACHE_FLASH_ATTR sendUserList(int page, AsyncWebSocketClient *client)
 	}
 }
 
+void ICACHE_FLASH_ATTR sendSpiffbrowser(int page, AsyncWebSocketClient *client)
+{
+	DynamicJsonDocument root(2048);
+	root["command"] = "spiffbrowser";
+	root["page"] = page;
+	JsonArray users = root.createNestedArray("list");
+	Dir dir = SPIFFS.openDir("/");
+	int first = (page - 1) * 10;
+	int last = page * 10;
+	int i = 0;
+	while (dir.next())
+	{
+		if (i >= first && i < last)
+		{
+			JsonObject item = users.createNestedObject();
+			item["filename"] = dir.fileName();
+			item["filetype"] = dir.fileName();
+			item["filesize"] = dir.fileSize();
+		}
+		i++;
+		yield();
+	}
+	float pages = i / 10.0;
+	root["haspages"] = ceil(pages);
+	size_t len = measureJson(root);
+	AsyncWebSocketMessageBuffer *buffer = ws.makeBuffer(len);
+	if (buffer)
+	{
+		serializeJson(root, (char *)buffer->get(), len + 1);
+		if (client)
+		{
+			wsMessageTicker.once_ms_scheduled(50, [client, buffer]() {
+				client->text(buffer);
+				client->text("{\"command\":\"result\",\"resultof\":\"spiffbrowser\",\"result\": true}");
+			});
+		}
+		else
+		{
+			ws.textAll("{\"command\":\"result\",\"resultof\":\"spiffbrowser\",\"result\": false}");
+		}
+	}
+}
+
 void ICACHE_FLASH_ATTR sendStatus(AsyncWebSocketClient *client)
 {
 	struct ip_info info;

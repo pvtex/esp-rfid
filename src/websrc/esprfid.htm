@@ -1,5 +1,23 @@
-<div id="filebrowsercontent">
-    <iframe src="/file" onload='javascript:(function(o){o.style.height=o.contentWindow.document.body.scrollHeight+"px";}(this));' style="height:400px;width:100%;border:none;overflow:hidden;"></iframe>
+<div id="spiffbrowsercontent">  
+    <div id="loading-img" class="text-center">
+        <h5>Please wait while fetching data... <span id="loadpages"></span></h5>
+    </div>
+    <div>
+        <legend>SPIFFS Browser</legend>
+        <div class="panel panel-default">
+            <table id="spiffbrowsertable" class="table" data-paging="true" data-filtering="true" data-sorting="true" data-editing="false" data-state="true"></table>
+        </div>
+    </div>
+    <div>
+        <label for="restoreUser" class="btn btn-link btn-sm">Upload User File</label>
+        <input id="restoreUser" type="file" accept="text/json" onchange="restoreUser();" style="display:none;">
+        <label for="restoreSet" class="btn btn-link btn-sm">Upload Settings File</label>
+        <input id="restoreSet" type="file" accept="text/json" onchange="restoreSet();" style="display:none;">
+    </div>
+    <div style="clear:both;">
+        <br>
+        <br>
+    </div>
 </div>
 <div id="backupcontent">
     <br>

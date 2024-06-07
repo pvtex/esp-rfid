@@ -662,6 +662,14 @@ function getUsers() {
   sendWebsocketWithRetry("{\"command\":\"userlist\", \"page\":" + page + "}");
 }
 
+function getSpiff() {
+  sendWebsocketWithRetry("{\"command\":\"spiff\", \"page\":" + page + "}");
+}
+
+function getSpiffbrowser() {
+  sendWebsocketWithRetry("{\"command\":\"spiffbrowser\", \"page\":" + page + "}");
+}
+
 function getEvents() {
   sendWebsocketWithRetry("{\"command\":\"geteventlog\", \"page\":" + page + ", \"filename\":\"" + theCurrentLogFile +"\"}");
 }
@@ -806,7 +814,10 @@ function getContent(contentname) {
           data = [];
           getEvents();
           break;
-        case "#filebrowsercontent":
+        case "#spiffbrowsercontent":
+          page = 1;
+          data = [];
+          getSpiffbrowser();
           break;
         default:
           break;
@@ -931,6 +942,101 @@ function twoDigits(value) {
     return "0" + value;
   }
   return value;
+}
+
+function initSpiffbrowserTable() {
+  jQuery(function($) {
+    ft = window.FooTable.init("#spiffbrowsertable", {
+      columns: [{
+          "name": "filename",
+          "title": "File Name",
+          "type": "text",
+          "sorted": true,
+          "direction": "ASC"
+        },
+        {
+          "name": "filetype",
+          "title": "File Type",
+          "parser": function(value) 
+          {
+            if (value === "/config.json") 
+              {
+                return("Main Config File");
+              }
+            if (value === "/latestlog.json") 
+            {
+              return("Main Access Log");
+            }
+            if (value === "/eventlog.json") 
+            {
+              return("Main Event Log");
+            }
+            if (value.substring(0,2) == "/P")
+            {
+              return("User File");
+            }
+            return("Other Filetype");
+          }
+        },
+        {
+          "name": "filesize",
+          "title": "Size",
+          "breakpoints": "xs sm",
+          "parser": function(value) {
+              value = value / 1024;
+              return (
+                value
+                  .toFixed(2) // always two decimal digits
+                  .replace('.', ',') // replace decimal point character with ,
+                  .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.') + ' KB'
+              ) // use . as a separator
+
+            }
+        },
+        {
+          "name":"filename",
+          "title":"Action",
+          "type":"text",
+          "formatter": function (value) 
+          {
+            var actions = $('<div/>')
+
+            var user_button = ($('<a/>', {'class':'btn btn-sm btn-default','filename':value})
+                .append($('<span/>', {'class': 'glyphicon glyphicon-trash'}))
+                .on("click", this, deletefile))
+                .appendTo(actions); 
+            var user_button = ($('<a/>', {'class':'btn btn-sm btn-default','filename':value})
+                .append($('<span/>', {'class': 'glyphicon glyphicon-floppy-disk'}))
+                .on("click", this, viewfile))
+                .appendTo(actions);
+
+            return actions;
+          }
+        },
+      ],
+      rows: data
+    });
+    function viewfile(e)
+    { 
+      theCurrentLogFile = this.getAttribute('filename');
+      if (theCurrentLogFile.indexOf("latestlog") >= 0)
+      {
+        getContent("#logcontent");
+      }
+      if (theCurrentLogFile.indexOf("eventlog") >= 0)
+      {
+        getContent("#eventcontent");
+      }
+
+    }
+    function deletefile(e)
+    { 
+      if (confirm("Really delete " + this.getAttribute('filename') + " ? This can not be undone!"))
+      {
+        sendWebsocket("{\"command\":\"spiffbrowser\" , \"action\":\"delete\", \"filename\":\"" + this.getAttribute('filename') + "\"}");
+      }
+    }
+  });
 }
 
 function initFileListTable() {
@@ -1505,6 +1611,15 @@ function socketMessageListener(evt) {
         }
         builddata(obj);
         break;
+      case "spiffbrowser":
+        haspages = obj.haspages;
+        if (haspages === 0) {
+          document.getElementById("loading-img").style.display = "none";
+          initSpiffbrowserTable();
+          break;
+        }
+        builddata(obj);
+        break;
       case "listfiles":
         haspages = obj.haspages;
         if (haspages === 0) {
@@ -1586,6 +1701,17 @@ function socketMessageListener(evt) {
             document.getElementById("cleareventlogbtn").disabled=false;
           }
           document.getElementById("loading-img").style.display = "none";
+        }
+        break;
+      case "spiffbrowser":
+        if (page < haspages && obj.result === true) {
+          getnextpage("spiffbrowser");
+        } else if (page === haspages) {
+          initSpiffbrowserTable();
+          document.getElementById("loading-img").style.display = "none";
+          $(".footable-show").click();
+          $(".fooicon-remove").click();
+          break;
         }
         break;
       case "latestlist":
@@ -1844,8 +1970,8 @@ $("#logmaintenance").click(function() {
 $(".noimp").on("click", function() {
   $("#noimp").modal("show");
 });
-$("#filebrowser").click(function() {
-  getContent("#filebrowsercontent");
+$("#spiffbrowser").click(function() {
+  getContent("#spiffbrowsercontent");
   return false;
 });
 
