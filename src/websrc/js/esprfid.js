@@ -993,26 +993,6 @@ function initSpiffbrowserTable() {
 
             }
         },
-        {
-          "name":"filename",
-          "title":"Action",
-          "type":"text",
-          "formatter": function (value) 
-          {
-            var actions = $('<div/>')
-
-            var user_button = ($('<a/>', {'class':'btn btn-sm btn-default','filename':value})
-                .append($('<span/>', {'class': 'glyphicon glyphicon-trash'}))
-                .on("click", this, deletefile))
-                .appendTo(actions); 
-            var user_button = ($('<a/>', {'class':'btn btn-sm btn-default','filename':value})
-                .append($('<span/>', {'class': 'glyphicon glyphicon-floppy-disk'}))
-                .on("click", this, viewfile))
-                .appendTo(actions);
-
-            return actions;
-          }
-        },
       ],
       rows: data
     });
