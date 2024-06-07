@@ -1,6 +1,12 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [2.0.6] - 2024-06-07
+- [firmware] added SPIFF browser in ws (uload,download and delete not working)
+
+## [2.0.3/4] - 2024-06-06
+- [firmware] only minor changes and typo fixes
+
 ## [2.0.2] - 2024-06-05
 - [firmware] added more MQTT output (access, pincode, tag, timestamp, username) and made them avaible with HA discover
 - [firmware] minor changes for stability improvement
