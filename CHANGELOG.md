@@ -2,6 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ## [2.0.6] - 2024-06-07
+- [firmware] pincode is now handled right in userlist and usereditor
 - [firmware] added SPIFF browser in ws (uload,download and delete not working)
 
 ## [2.0.3/4] - 2024-06-06
