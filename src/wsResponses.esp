@@ -161,6 +161,9 @@ void ICACHE_FLASH_ATTR sendStatus(AsyncWebSocketClient *client)
 		struct station_config conf;
 		wifi_station_get_config(&conf);
 		root["ssid"] = String(reinterpret_cast<char *>(conf.ssid));
+		char rssibuffer[9];
+		sprintf(rssibuffer, "%d dBm",WiFi.RSSI());
+		root["rssi"] = rssibuffer;
 		root["dns"] = printIP(WiFi.dnsIP());
 		root["mac"] = WiFi.macAddress();
 	}
