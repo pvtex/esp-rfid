@@ -767,6 +767,7 @@ function listStats() {
   document.getElementById("sver").innerText = version;
   $("#mainver").text(version);
   document.getElementById("systemname").innerHTML = ajaxobj.hostname;
+  document.getElementById("systemnamestatus").innerHTML = ajaxobj.hostname;
 }
 
 function getContent(contentname) {
