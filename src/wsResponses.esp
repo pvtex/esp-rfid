@@ -25,10 +25,10 @@ void ICACHE_FLASH_ATTR sendUserList(int page, AsyncWebSocketClient *client)
 			if (!error)
 			{
 				String username = json["user"];
-				const char * pincode = "";
+				String pincode = "";
 				if(json.containsKey("pincode"))
 				{
-					pincode = json["pincode"];
+					pincode = String((const char *)json["pincode"]);
 				}
 				for (int x = 1; x <= MAX_NUM_RELAYS; x++)
 				{

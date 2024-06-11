@@ -296,7 +296,7 @@ void ICACHE_RAM_ATTR loop()
 	if (config.wifiTimeout > 0 && wiFiUptimeMillis > (config.wifiTimeout * 1000) && WiFi.isConnected())
 	{
 		writeEvent("INFO", "wifi", "WiFi is going to be disabled", "");
-		//disableWifi();
+		disableWifi();
 	}
 
 	// don't try connecting to WiFi when waiting for pincode
@@ -306,7 +306,7 @@ void ICACHE_RAM_ATTR loop()
 		{
 			enableWifi();
 			writeEvent("INFO", "wifi", "Enabling WiFi", "");
-			//doEnableWifi = false;
+			doEnableWifi = false;
 		}
 	}
 
