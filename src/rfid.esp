@@ -173,6 +173,7 @@ void genericRead()
 	/*
 	 *  Test RDM6300 125khz reader
 	 */
+#ifdef DEBUG
 	while (Serial.available() > 0)
 	{
 		RFIDr.rfidSerial(Serial.read());
@@ -183,10 +184,8 @@ void genericRead()
 		type = RFIDr.GetTagType();
 		rfidState = cardSwiped;
 		cooldown = millis() + COOLDOWN_MILIS;
-#ifdef DEBUG
 		Serial.print(F("[ INFO ] PICC's UID: "));
 		Serial.print(uid);
-#endif
 	}
 
 	/*
@@ -208,6 +207,7 @@ void genericRead()
 			pn532Read();
 		}
 	}
+#endif
 }
 
 

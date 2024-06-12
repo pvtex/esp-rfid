@@ -99,9 +99,14 @@ void ICACHE_FLASH_ATTR sendStatus(AsyncWebSocketClient *client)
 	char uptimebuffer[9];
 	sprintf(uptimebuffer, "%02d:%02d:%02d", h, m, s);
 	root["uptime"] = uptimebuffer;
-
 	root["version"] = VERSION;
 	root["hostname"] = WiFi.hostname();
+
+	String debugver = "";
+#ifdef DEBUG
+	debugver = "debug";
+#endif
+	root["debugver"] = debugver;
 
 	if (config.accessPointMode)
 	{

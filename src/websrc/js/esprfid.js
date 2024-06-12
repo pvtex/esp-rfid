@@ -820,6 +820,8 @@ function listStats() {
   document.getElementById("dns").innerHTML = ajaxobj.dns;
   document.getElementById("mac").innerHTML = ajaxobj.mac;
   document.getElementById("sver").innerText = version;
+  document.getElementById("debugver").innerText = ajaxobj.debugver;
+  document.getElementById("maindebug").innerText = ajaxobj.debugver;
   document.getElementById("systemname").innerHTML = ajaxobj.hostname;
   document.getElementById("systemnamedevice").innerHTML = ajaxobj.hostname;
   $("#mainver").text(version);
@@ -2132,6 +2134,7 @@ function getLatestReleaseInfo() {
     $("#releasebody").text(release.body);
     $("#releaseinfo").fadeIn("slow");
     $("#versionhead").text(version);
+    document.getElementById("debughead").innerText = ajaxobj.debugver;
   }).error(function() {
     $("#onlineupdate").html("<h5>Couldn't get release info. Are you connected to the Internet?</h5>");
   });
