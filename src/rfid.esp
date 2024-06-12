@@ -8,8 +8,8 @@ String v1uid = "";
 String username = "";
 bool wiegandAvailable = false;
 
-#define WIEGAND_ENT 0xD
-#define WIEGAND_ESC 0x1B
+#define WIEGAND_ENT "b" //0xD
+#define WIEGAND_ESC "a" //0x1B
 
 enum RfidStates
 {
@@ -52,11 +52,12 @@ void wiegandRead()
 {
 	if (wiegandAvailable && rfidState == waitingRfid)
 	{
-		// if we get anything between 24 or 34 bit burst then we have a scanned PICC
-		if (wg.getWiegandType() >= WIEGANDTYPE_PICC24 && wg.getWiegandType() <= WIEGANDTYPE_PICC34)
+		wg.pause();
+		// if we get anything between 24 or 58 bit burst then we have a scanned PICC
+		if (wg.getBitCounted() >= WIEGANDTYPE_PICC24 && wg.getBitCounted() <= WIEGANDTYPE_PICC58)
 		{
 			uid = String(wg.getCode(), config.wiegandReadHex ? HEX : DEC);
-			type = String(wg.getWiegandType(), DEC);
+			type = String(wg.getBitCounted(), DEC);
 #ifdef DEBUG
 			Serial.print(F("[ INFO ] PICC's UID: "));
 			Serial.println(uid);
@@ -100,6 +101,7 @@ void wiegandRead()
 				processingState = unknown;
 			}
 		}
+		wg.clear();
 	}
 }
 
@@ -273,19 +275,23 @@ void pinCodeRead()
 	// for the next key unless * or # have been pressed
 	// we do not require * as the first character because some
 	// readers use this as special admin code and would hence require *#PIN#
-	if (wg.getWiegandType() == WIEGANDTYPE_KEYPRESS4 || wg.getWiegandType() == WIEGANDTYPE_KEYPRESS8)
+
+	wg.pause();
+	if (int(wg.getBitCounted()) == WIEGANDTYPE_KEYPRESS4 || int(wg.getBitCounted()) == WIEGANDTYPE_KEYPRESS8)
 	{
-		if (wg.getCode() != WIEGAND_ENT && wg.getCode() != WIEGAND_ESC) // normal key entry, add to currentInput
+		if (String(wg.getCode(), HEX) != WIEGAND_ENT && String(wg.getCode(), HEX) != WIEGAND_ESC) // normal key entry, add to currentInput
 		{
 #ifdef DEBUG
 			Serial.println("Keycode captured. . .");
+			Serial.print("Key: ");
+			Serial.println(String(wg.getCode(), HEX));
 #endif
 			currentInput = currentInput + String(wg.getCode());
 			keyTimer = millis();
 			ledWaitingOn();
 		} else if (keyTimer > 0) // if we are waitingProcessing on input still
 		{
-			if(wg.getCode() == WIEGAND_ESC) // esc, abort pincode
+			if(String(wg.getCode(), HEX) == WIEGAND_ESC) // esc, abort pincode
 			{
 #ifdef DEBUG
 				Serial.println("Keycode escape, aborting pincode entry");
@@ -294,7 +300,7 @@ void pinCodeRead()
 				processingState = cancelled;
 				cooldown = millis() + COOLDOWN_MILIS;
 			}
-			if(wg.getCode() == WIEGAND_ENT) // enter, process pincode
+			if(String(wg.getCode(), HEX) == WIEGAND_ENT) // enter, process pincode
 			{
 				pinCode = currentInput;
 				if (config.pinCodeOnly && rfidState == waitingRfid)
@@ -316,6 +322,7 @@ void pinCodeRead()
 			}
 		}
 	}
+	wg.clear();
 }
 
 int weekdayFromMonday(int weekdayFromSunday) {
@@ -638,7 +645,13 @@ void ICACHE_FLASH_ATTR ShowMFRC522ReaderDetails()
 
 void ICACHE_FLASH_ATTR setupWiegandReader(int d0, int d1, bool removeParityBits)
 {
-	wg.begin(d0, d1, removeParityBits);
+	wg.begin(d0, d1, 58, 15); //58bit
+	rfidState = waitingRfid;
+}
+
+void ICACHE_FLASH_ATTR setupWiegandReader(int d0, int d1, bool removeParityBits, int wiegandbits)
+{
+	wg.begin(d0, d1, wiegandbits, 15); 
 	rfidState = waitingRfid;
 }
 

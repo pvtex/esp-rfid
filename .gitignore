@@ -8,7 +8,6 @@
 .piolibdeps
 .clang_complete
 .gcc-flags.json
-.pio
 
 # esp-rfid
 src/websrc/css/required.css

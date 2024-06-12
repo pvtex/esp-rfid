@@ -44,12 +44,12 @@ Config config;
 
 #include <MFRC522.h>
 #include "PN532.h"
-#include <Wiegand.h>
+#include <WiegandNG.h>
 #include "rfid125kHz.h"
 
 MFRC522 mfrc522 = MFRC522();
 PN532 pn532;
-WIEGAND wg;
+WiegandNG wg;
 RFID_Reader RFIDr;
 
 // relay specific variables

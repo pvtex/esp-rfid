@@ -204,6 +204,7 @@ function listhardware() {
   document.getElementById("ledwaitingpin").value = config.hardware.ledwaitingpin;
   document.getElementById("beeperpin").value = config.hardware.beeperpin;
   document.getElementById("readertype").value = config.hardware.readertype;
+  document.getElementById("wiegandbits").value = config.hardware.wiegandbits;
   document.getElementById("wg0pin").value = config.hardware.wgd0pin;
   document.getElementById("wg1pin").value = config.hardware.wgd1pin;
   document.getElementById("gpioss").value = config.hardware.sspin;
@@ -256,6 +257,7 @@ function uncommited() {
 
 function savehardware() {
   config.hardware.readertype = parseInt(document.getElementById("readertype").value);
+  config.hardware.wiegandbits = parseInt(document.getElementById("wiegandbits").value);
   config.hardware.wgd0pin = parseInt(document.getElementById("wg0pin").value);
   config.hardware.wgd1pin = parseInt(document.getElementById("wg1pin").value);
   config.hardware.useridstoragemode = document.getElementById("useridstoragemode").value;
