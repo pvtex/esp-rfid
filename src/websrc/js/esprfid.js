@@ -746,7 +746,7 @@ function listSCAN(obj) {
     } else {
       $(".footable-add").click();
       document.getElementById("uid").value = obj.uid;
-      document.getElementById("picctype").value = obj.type;
+      document.getElementById("picctype").value = obj.picctype;
       document.getElementById("username").value = obj.user;
       document.getElementById("acctype").value = obj.acctype;
     }
@@ -942,6 +942,7 @@ function restore1by1(i, len, data) {
   var datatosend = {};
   datatosend.command = "userfile";
   datatosend.uid = data[i].uid;
+  datatosend.picctype = data[i].picctype;
   datatosend.pincode = data[i].pincode;
   datatosend.user = data[i].username;
   datatosend.acctype = data[i].acctype;
@@ -1320,6 +1321,12 @@ function initUserTable() {
             "visible": false
           },
           {
+            "name": "picctype",
+            "title": "PICC Type",
+            "type": "text",
+            "visible": false
+          },
+          {
             "name": "username",
             "title": "User Name or Label"
           },
@@ -1453,6 +1460,7 @@ function initUserTable() {
               if (xval === "Disabled") return 0;
             }
             $editor.find("#uid").val(values.uid);
+            $editor.find("#picctype").val(values.picctype);
             $editor.find("#pincode").val(values.pincode);
             $editor.find("#username").val(values.username);
             $editor.find("#acctype").val(giveAccType(1));
@@ -1491,6 +1499,7 @@ function initUserTable() {
       var row = $modal.data("row"),
         values = {
           uid: $editor.find("#uid").val(),
+          picctype: parseInt($editor.find("#picctype").val()),
           pincode: $editor.find("#pincode").val(),
           username: $editor.find("#username").val(),
           acctype: parseInt($editor.find("#acctype").val()),
@@ -1511,6 +1520,7 @@ function initUserTable() {
       var datatosend = {};
       datatosend.command = "userfile";
       datatosend.uid = $editor.find("#uid").val();
+      datatosend.picctype = parseInt($editor.find("#picctype").val()); 
       datatosend.pincode = $editor.find("#pincode").val();
       datatosend.user = $editor.find("#username").val();
       datatosend.acctype = parseInt($editor.find("#acctype").val());
