@@ -28,7 +28,6 @@
 
 #define RDM6300_BAUDRATE 9600
 #define RDM6300_READ_TIMEOUT 20
-#define RDM6300_RX_PIN 4
 
 // hardware defines
 

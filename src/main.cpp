@@ -52,7 +52,7 @@ MFRC522 mfrc522 = MFRC522();
 PN532 pn532;
 WIEGAND wg;
 RFID_Reader RFIDr;
-SoftwareSerial *rdm6300_sw_serial = NULL;
+SoftwareSerial *rdm6300SwSerial = NULL;
 
 // relay specific variables
 bool activateRelay[MAX_NUM_RELAYS] = {false, false, false, false};
