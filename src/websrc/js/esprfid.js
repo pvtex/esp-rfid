@@ -34,6 +34,7 @@ var config = {
         "readertype": 1,
         "wgd0pin": 4,
         "wgd1pin": 5,
+        "rdm6300pin": 4,
         "sspin": 0,
         "rfidgain": 32,
         "wifipin": 255,
@@ -149,21 +150,40 @@ function syncBrowserTime() {
 
 function handleReader() {
   var rType = parseInt(document.getElementById("readertype").value);
-  if (rType === 0 || rType === 4) {
+  if (rType === 0) {
     document.getElementById("wiegandForm").style.display = "none";
     document.getElementById("mfrc522Form").style.display = "block";
     document.getElementById("rc522gain").style.display = "block";
-  } else if (rType === 1 || rType === 5) {
+    document.getElementById("rdm6300").style.display = "none";
+  } else if (rType === 1) {
     document.getElementById("wiegandForm").style.display = "block";
     document.getElementById("mfrc522Form").style.display = "none";
-  } else if (rType === 2 || rType === 6) {
+    document.getElementById("rdm6300").style.display = "none";
+  } else if (rType === 2) {
     document.getElementById("wiegandForm").style.display = "none";
     document.getElementById("mfrc522Form").style.display = "block";
     document.getElementById("rc522gain").style.display = "none";
+    document.getElementById("rdm6300").style.display = "none";
   } else if (rType === 3) {
     document.getElementById("wiegandForm").style.display = "none";
     document.getElementById("mfrc522Form").style.display = "none";
     document.getElementById("rc522gain").style.display = "none";
+    document.getElementById("rdm6300").style.display = "block";
+  } else if (rType === 4) {
+    document.getElementById("wiegandForm").style.display = "none";
+    document.getElementById("mfrc522Form").style.display = "block";
+    document.getElementById("rc522gain").style.display = "none";
+    document.getElementById("rdm6300").style.display = "block";
+  } else if (rType === 5) {
+    document.getElementById("wiegandForm").style.display = "block";
+    document.getElementById("mfrc522Form").style.display = "none";
+    document.getElementById("rc522gain").style.display = "none";
+    document.getElementById("rdm6300").style.display = "block";
+  } else if (rType === 6) {
+    document.getElementById("wiegandForm").style.display = "none";
+    document.getElementById("mfrc522Form").style.display = "block";
+    document.getElementById("rc522gain").style.display = "none";
+    document.getElementById("rdm6300").style.display = "block";
   }
 }
 
@@ -197,6 +217,7 @@ function listhardware() {
   document.getElementById("readertype").value = config.hardware.readertype;
   document.getElementById("wg0pin").value = config.hardware.wgd0pin;
   document.getElementById("wg1pin").value = config.hardware.wgd1pin;
+  document.getElementById("rdm6300pin").value = config.hardware.rdm6300pin;
   document.getElementById("gpioss").value = config.hardware.sspin;
   document.getElementById("gain").value = config.hardware.rfidgain;
   document.getElementById("gpiorly").value = config.hardware.rpin;
@@ -249,6 +270,7 @@ function savehardware() {
   config.hardware.readertype = parseInt(document.getElementById("readertype").value);
   config.hardware.wgd0pin = parseInt(document.getElementById("wg0pin").value);
   config.hardware.wgd1pin = parseInt(document.getElementById("wg1pin").value);
+  config.hardware.rdm6300pin = parseInt(document.getElementById("rdm6300pin").value);
   config.hardware.useridstoragemode = document.getElementById("useridstoragemode").value;
   config.hardware.requirepincodeafterrfid = document.getElementById("requirepincodeafterrfid").checked;
   config.hardware.allowpincodeonly = document.getElementById("allowpincodeonly").checked;

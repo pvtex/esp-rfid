@@ -170,12 +170,10 @@ void pn532Read()
  */
 void genericRead()
 {
-	/*
-	 *  Test RDM6300 125khz reader
-	 */
-	while (Serial.available() > 0)
+	while (rdm6300SwSerial->available() > 0)
 	{
-		RFIDr.rfidSerial(Serial.read());
+		char read = rdm6300SwSerial->read();
+		RFIDr.rfidSerial(read);
 	}
 	if (RFIDr.Available())
 	{
@@ -683,4 +681,11 @@ void ICACHE_FLASH_ATTR setupPN532Reader(int rfidss)
 			break;
 		}
 	} while (false);
+}
+
+void ICACHE_FLASH_ATTR setupRDM6300Reader(int rmd6300TxPin)
+{
+	rdm6300SwSerial = new SoftwareSerial(rmd6300TxPin, -1);
+	rdm6300SwSerial->begin(RDM6300_BAUDRATE);
+	rdm6300SwSerial->setTimeout(RDM6300_READ_TIMEOUT);
 }
