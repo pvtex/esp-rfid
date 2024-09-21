@@ -182,6 +182,10 @@ bool ICACHE_FLASH_ATTR connectSTA(const char *ssid, const char *password, byte b
 #endif
 		if (!config.fallbackMode)
 		{
+			#ifdef DEBUG
+				Serial.println();
+				Serial.println(F("[ INFO ] trying to reconnect to WiFi"));
+			#endif
 			wifiReconnectTimer.once(300, setEnableWifi);
 		}
 		return false;

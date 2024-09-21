@@ -24,7 +24,7 @@ jobs:
         pkg -t node16-linux -C GZip .
 
     - name: Export Linux binary
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: bins
         path: |

@@ -266,6 +266,7 @@ If the UID is in the users list, there can be a set of possible "access" configu
   "access":"the access state",
   "username":"username",
   "uid":"token UID",
+  "pincode":"user pincode",
   "hostname":"your esp-rfid hostname",
   "doorName":"your door name"
 }
@@ -280,6 +281,7 @@ If instead the UID is not present in the users list the message will be:
   "access":"Denied",
   "username":"Unknown",
   "uid":"token UID",
+  "pincode":"user pincode",
   "hostname":"your esp-rfid hostname"
 }
 ```
@@ -308,6 +310,7 @@ In case of multiple doors managed by one esp-rfid, you'll get an array for doorn
   "access":["the access state door 1", "access state door 2"],
   "username":"username",
   "uid":"token UID",
+  "pincode":"user pincode",
   "hostname":"your esp-rfid hostname",
   "doorName":["door 1", "door 2"]
 }
@@ -622,6 +625,7 @@ And the message looks like this:
 {
   "uid":"token UID",
   "username":"username",
+  "pincode":"user pincode",
   "access":"the access state",
   "time":1605991375,
  }

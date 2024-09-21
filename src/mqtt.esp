@@ -5,6 +5,7 @@ char mqttBuffer[MAX_MQTT_BUFFER];
 struct MqttMessage {
 	char command[20];
 	char uid[20];
+	char pinCode[20];
 	char user[64];
 	char door[20];
 	char serializedMessage[MAX_MQTT_BUFFER];
@@ -229,6 +230,54 @@ void mqttPublishDiscovery()
 	user["dev"] = via;
 	mqttPublishEventHA(&user, topic);
 
+	DynamicJsonDocument pincode(512);
+	topic = "sensor/" + deviceName + "/pincode/config";
+	pincode["name"] = "PinCode";
+	pincode["uniq_id"] = deviceName + "/pincode";
+	pincode["stat_t"] = mtopic + "/tag";
+	pincode["avty_t"] = mtopic + "/avty";
+	pincode["val_tpl"] = "{{ value_json.pincode }}";
+	pincode["json_attr_t"] = mtopic + "/tag";
+	pincode["icon"] = "mdi:dialpad";
+	pincode["dev"] = via;
+	mqttPublishEventHA(&pincode, topic);
+
+	DynamicJsonDocument accessquestion(512);
+	topic = "sensor/" + deviceName + "/access/config";
+	accessquestion["name"] = "Access";
+	accessquestion["uniq_id"] = deviceName + "/access";
+	accessquestion["stat_t"] = mtopic + "/tag";
+	accessquestion["avty_t"] = mtopic + "/avty";
+	accessquestion["val_tpl"] = "{{ value_json.access }}";
+	accessquestion["json_attr_t"] = mtopic + "/tag";
+	accessquestion["icon"] = "mdi:lock-question";
+	accessquestion["dev"] = via;
+	mqttPublishEventHA(&accessquestion, topic);
+
+	DynamicJsonDocument doorname(512);
+	topic = "sensor/" + deviceName + "/doorname/config";
+	doorname["name"] = "DoorName";
+	doorname["uniq_id"] = deviceName + "/doorname";
+	doorname["stat_t"] = mtopic + "/tag";
+	doorname["avty_t"] = mtopic + "/avty";
+	doorname["val_tpl"] = "{{ value_json.doorName }}";
+	doorname["json_attr_t"] = mtopic + "/tag";
+	doorname["icon"] = "mdi:door";
+	doorname["dev"] = via;
+	mqttPublishEventHA(&doorname, topic);
+
+	DynamicJsonDocument timestamp(512);
+	topic = "sensor/" + deviceName + "/time/config";
+	timestamp["name"] = "Time";
+	timestamp["uniq_id"] = deviceName + "/time";
+	timestamp["stat_t"] = mtopic + "/tag";
+	timestamp["avty_t"] = mtopic + "/avty";
+	timestamp["val_tpl"] = "{{ value_json.time }}";
+	timestamp["json_attr_t"] = mtopic + "/tag";
+	timestamp["icon"] = "mdi:lock-clock";
+	timestamp["dev"] = via;
+	mqttPublishEventHA(&timestamp, topic);
+
 	DynamicJsonDocument dellog(512);
 	topic = "button/" + deviceName + "/dellog/config";
 	dellog["name"] = deviceName + " Delete Log";
@@ -262,7 +311,7 @@ void mqttPublishHeartbeat(time_t heartbeat, time_t uptime)
 	mqttPublishEvent(&root);
 }
 
-void mqttPublishAccess(time_t accesstime, String const &isknown, String const &type, String const &user, String const &uid)
+void mqttPublishAccess(time_t accesstime, String const &isknown, String const &type, String const &user, String const &uid, String const &pincode)
 {
 	DynamicJsonDocument root(512);
 	if (config.mqttEvents)
@@ -271,9 +320,12 @@ void mqttPublishAccess(time_t accesstime, String const &isknown, String const &t
 	}
 
 	root["uid"] = uid;
+	root["pincode"] = pincode;
 	root["username"] = user;
 	root["access"] = type;
+
 	root["time"] = accesstime;
+	
 	root["doorName"] = config.doorName[0];
 
 	if (!config.mqttHA)
@@ -289,7 +341,7 @@ void mqttPublishAccess(time_t accesstime, String const &isknown, String const &t
 	}
 }
 
-void mqttPublishAccess(time_t accesstime, String const &isknown, int types[MAX_NUM_RELAYS], String const &user, String const &uid)
+void mqttPublishAccess(time_t accesstime, String const &isknown, int types[MAX_NUM_RELAYS], String const &user, String const &uid, String const &pincode)
 {
 	DynamicJsonDocument root(512);
 	JsonArray access = root.createNestedArray("access");
@@ -316,7 +368,9 @@ void mqttPublishAccess(time_t accesstime, String const &isknown, int types[MAX_N
 	}
 
 	root["uid"] = uid;
+	root["pincode"] = pincode;
 	root["username"] = user;
+
 	root["time"] = accesstime;
 
 	if (!config.mqttHA)
@@ -520,7 +574,7 @@ void processMqttMessage(MqttMessage *incomingMessage)
 		Serial.println("[ INFO ] Door open");
 #endif
 		writeLatest(" ", "MQTT", 1);
-		mqttPublishAccess(epoch, "true", "Always", "MQTT", " ");
+		mqttPublishAccess(epoch, "true", "Always", "MQTT", " ", " ");
 		for (int currentRelay = 0; currentRelay < config.numRelays; currentRelay++)
 		{
 			activateRelay[currentRelay] = true;
@@ -533,7 +587,7 @@ void processMqttMessage(MqttMessage *incomingMessage)
 		Serial.println("[ INFO ] Door open");
 #endif
 		writeLatest(" ", "MQTT", 1);
-		mqttPublishAccess(epoch, "true", "Always", "MQTT", " ");
+		mqttPublishAccess(epoch, "true", "Always", "MQTT", " ", " ");
 		const char *door = incomingMessage->door;
 		String stringDoor = String(door);
 		int currentRelay = stringDoor.toInt();
@@ -549,7 +603,7 @@ void processMqttMessage(MqttMessage *incomingMessage)
 		Serial.println("[ INFO ] Door close");
 #endif
 		writeLatest(" ", "MQTT", 1);
-		mqttPublishAccess(epoch, "true", "Always", "MQTT", " ");
+		mqttPublishAccess(epoch, "true", "Always", "MQTT", " ", " ");
 		const char *door = incomingMessage->door;
 		String stringDoor = String(door);
 		int currentRelay = stringDoor.toInt();
