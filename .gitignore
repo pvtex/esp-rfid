@@ -20,8 +20,6 @@ bin/generic.bin
 bin/forV2Board.bin
 bin/debug.bin
 
-ESP-Debug
-
 # node js
 
 # Logs
