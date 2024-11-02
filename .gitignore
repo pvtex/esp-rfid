@@ -3,10 +3,12 @@
 
 # platformio
 
+.pio
 .pioenvs
 .piolibdeps
 .clang_complete
 .gcc-flags.json
+.pio
 
 # esp-rfid
 src/websrc/css/required.css
@@ -85,3 +87,4 @@ typings/
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/*
+.DS_Store
