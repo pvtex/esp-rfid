@@ -1,13 +1,17 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
-## [2.0.0] - 2023-11-14
+## [2.0.0] - 2024-11-02
+
+### Bugfixes
+Too many to list, but all of the confirmed bugs up to now have been fixed.
 
 #### Breaking changes
 - [firmware] Removed build flag for `OFFICIALBOARD` #533 @matjack1
 - [firmware] MQTT endpoints have been changed to be more consistent and complete #501 @matjack1
 
 #### Added
+- [firmware] Addedd support for software serial to support RDM6300 sensors on custom pins #655 @teodino93
 - [firmware] Moved to native Arduino support for timezone and NTP to support daylight saving time #604 @matjack1
 - [firmware] Added door name, to send via MQTT access type and door name for setups with multiple doors #598 @matjack1
 - [firmware] Added more options for Wiegand readers on which bits to read #582 @matjack1
